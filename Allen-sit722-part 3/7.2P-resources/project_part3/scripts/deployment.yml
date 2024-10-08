@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+        - name: book-catalog
+          image: agdoc.azurecr.io/project_part3-book_catalog:latest 
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://allen_sit722_user:TWS2dg9t1BM0gxxHVHJYNCKmJZSlt2LD@dpg-cs1s16m8ii6s73d6u0e0-a.oregon-postgres.render.com/allen_sit722"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-management
+  template:
+    metadata:
+      labels:
+        app: inventory-management
+    spec:
+      containers:
+        - name: inventory-management
+          image: agdoc.azurecr.io/project_part3-inventory_management:latest 
+          ports:
+            - containerPort: 8081
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://allen_sit722_user:TWS2dg9t1BM0gxxHVHJYNCKmJZSlt2LD@dpg-cs1s16m8ii6s73d6u0e0-a.oregon-postgres.render.com/allen_sit722"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+  selector:
+    app: book-catalog
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-management
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8081
+  selector:
+    app: inventory-management

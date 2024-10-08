@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  # Book Catalog Microservice
+  book_catalog:
+    build: ./book_catalog  
+    container_name: project3-book_catalog
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db  
+    networks:
+      - library_network
+
+  # Inventory Management Microservice
+  inventory_management:
+    build: ./inventory_management  
+    container_name: project3-inventory_management
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db  
+    networks:
+      - library_network
+
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: library
+    ports:
+      - "5432:5432"
+    networks:
+      - library_network
+
+# Define the network
+networks:
+  library_network:
+    driver: bridge
